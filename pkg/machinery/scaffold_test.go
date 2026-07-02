@@ -17,6 +17,7 @@ package machinery
 import (
 	"errors"
 	"os"
+	"strconv"
 	"time"
 
 	. "github.com/onsi/ginkgo/v2"
@@ -88,6 +89,12 @@ var _ = Describe("Scaffold", func() {
 			Expect(s.injector.resource).To(BeNil())
 		})
 
+		It("should substitute YEAR in boilerplate via WithBoilerplate", func() {
+			currentYear := strconv.Itoa(time.Now().UTC().Year())
+			s := NewScaffold(Filesystem{FS: afero.NewMemMapFs()}, WithBoilerplate("Copyright YEAR The Authors."))
+			Expect(s.injector.boilerplate).To(Equal("Copyright " + currentYear + " The Authors."))
+		})
+
 		It("should succeed with resource option", func() {
 			res := &resource.Resource{GVK: resource.GVK{
 				Group:   "group",
@@ -127,7 +134,6 @@ var _ = Describe("Scaffold", func() {
 			Expect(SubstituteYear("Copyright 2024 The Authors.")).
 				To(Equal("Copyright 2024 The Authors."))
 		})
-
 		DescribeTable("should replace only standalone YEAR placeholders",
 			func(input, expected string) {
 				Expect(SubstituteYear(input)).To(Equal(expected))
@@ -149,6 +155,10 @@ var _ = Describe("Scaffold", func() {
 				"Copyright 2025 YEAR2024 2024YEAR YEAR_2024 Authors.",
 			),
 		)
+
+		It("should return empty string unchanged", func() {
+			Expect(SubstituteYear("")).To(Equal(""))
+		})
 	})
 
 	Describe("Scaffold.Execute", func() {

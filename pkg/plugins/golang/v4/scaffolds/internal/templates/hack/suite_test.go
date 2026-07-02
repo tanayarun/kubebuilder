@@ -17,19 +17,13 @@ limitations under the License.
 package hack_test
 
 import (
+	"testing"
+
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-
-	"sigs.k8s.io/kubebuilder/v4/pkg/plugins/golang/v4/scaffolds/internal/templates/hack"
 )
 
-var _ = Describe("Boilerplate", func() {
-	It("should contain literal YEAR token in template body", func() {
-		bp := &hack.Boilerplate{
-			Owner:   "The Kubernetes Authors",
-			License: "apache2",
-		}
-		Expect(bp.SetTemplateDefaults()).To(Succeed())
-		Expect(bp.GetBody()).To(ContainSubstring("YEAR"))
-	})
-})
+func TestHackTemplates(t *testing.T) {
+	RegisterFailHandler(Fail)
+	RunSpecs(t, "Hack Templates Suite")
+}
